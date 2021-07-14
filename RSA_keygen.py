@@ -4,8 +4,10 @@ import random
 
 
 class RSAkeygen:
-    low_primes = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
-    MAX_32_BIT = 4294967295
+
+    def __init__(self, settings):
+        self.settings = settings.copy()
+        self.low_primes = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
 
     def generate_key(self):
         p = self.generate_prime()
@@ -13,14 +15,12 @@ class RSAkeygen:
         while p == q:
             q = self.generate_prime()
 
-        print(p, q)
-
         n = p * q
         l = self.least_common_multiple(p - 1, q - 1)
 
-        e = self.generate_prime(maximum = l - 1)
+        e = self.generate_prime(maximum=l - 1)
         while l % e == 0:
-            e = self.generate_prime(maximum = l - 1)
+            e = self.generate_prime(maximum=l - 1)
 
         d = pow(e, -1, l)
 
@@ -45,16 +45,17 @@ class RSAkeygen:
             return arr[1]
 
     def generate_low_level_prime(self, maximum=-1):
+        key_length = int(self.settings["Key length"])
         finished = False
 
         while not finished:
             finished = True
 
-            # generate odd random 16-bit number
+            # generate odd random key-length-bit number
             number = 0
             if maximum == -1:
-                while (number < 32768) or (number % 2 == 0):
-                    number = random.getrandbits(16)
+                while (number < ((2 ** key_length)/2)) or (number % 2 == 0):
+                    number = random.getrandbits(key_length)
             else:
                 while (number % 2 == 0):
                     number = random.randint(1, maximum)
@@ -67,8 +68,7 @@ class RSAkeygen:
 
         return number
 
-    @staticmethod
-    def perform_rabin_miller_test(number, repeats=20):
+    def perform_rabin_miller_test(self, number, repeats=10000):
 
         factor = number - 1
         exponent = 0
