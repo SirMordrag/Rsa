@@ -1,0 +1,4 @@
+Keys (public, private):  (548428634215493197, 13404209533689397) (548428634215493197, 136138334080255533)
+
+for GUI: ZMJT reccomends QT
+for optimalization: numbat
